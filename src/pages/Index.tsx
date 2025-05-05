@@ -15,7 +15,7 @@ const Index = () => {
       <Navbar />
       <Hero />
       
-      <ScrollReveal className="section-gradient">
+      <ScrollReveal>
         <Courses />
       </ScrollReveal>
       

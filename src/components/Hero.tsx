@@ -19,17 +19,25 @@ const Hero = () => {
 
   return (
     <section className="relative h-screen flex items-center overflow-hidden">
-      {/* Background Image with parallax effect */}
+      {/* Background with gradient overlay */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=2600&q=80')",
+          backgroundImage: "linear-gradient(90deg, hsla(221, 45%, 73%, 1) 0%, hsla(220, 78%, 29%, 1) 100%)",
           transform: `translateY(${scrollY * 0.2}px)`,
         }}
       >
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        {/* Abstract patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="white" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
       </div>
 
       {/* Animated clouds */}
@@ -48,11 +56,11 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10 text-white">
         <div className="max-w-3xl animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            Learn to Fly with Melbourne's Premier Flight School
+            Soar Beyond Limits with Melbourne's Premier Flight School
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-100">
             World-class training, modern aircraft, and experienced instructors to
-            help you soar to new heights.
+            help you achieve your aviation dreams.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
