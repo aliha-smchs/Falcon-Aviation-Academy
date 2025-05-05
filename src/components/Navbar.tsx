@@ -30,23 +30,23 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
         <a href="#" className="flex items-center space-x-2">
-          <Plane className="h-8 w-8 text-sky-600" />
-          <span className="font-bold text-xl text-navy-900">Melbourne Flight Academy</span>
+          <Plane className={`h-8 w-8 ${isScrolled ? 'text-sky-600' : 'text-sky-400'}`} />
+          <span className={`font-bold text-xl font-display ${isScrolled ? 'text-navy-900' : 'text-white'}`}>Melbourne Flight Academy</span>
         </a>
         
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#courses" className="nav-link font-medium">Courses</a>
-          <a href="#instructors" className="nav-link font-medium">Instructors</a>
-          <a href="#fleet" className="nav-link font-medium">Our Fleet</a>
-          <a href="#testimonials" className="nav-link font-medium">Testimonials</a>
-          <a href="#contact" className="nav-link font-medium">Contact</a>
-          <Button className="bg-sky-600 hover:bg-sky-700">Book Trial Flight</Button>
+          <a href="#courses" className={`nav-link font-medium ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Courses</a>
+          <a href="#instructors" className={`nav-link font-medium ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Instructors</a>
+          <a href="#fleet" className={`nav-link font-medium ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Our Fleet</a>
+          <a href="#testimonials" className={`nav-link font-medium ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Testimonials</a>
+          <a href="#contact" className={`nav-link font-medium ${isScrolled ? 'text-navy-800' : 'text-white'}`}>Contact</a>
+          <Button className="bg-sky-600 hover:bg-sky-700 shadow-sm hover:shadow-md">Book Trial Flight</Button>
         </div>
         
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden text-navy-900" 
+          className={`md:hidden ${isScrolled ? 'text-navy-900' : 'text-white'}`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
