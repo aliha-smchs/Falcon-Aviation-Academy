@@ -1,25 +1,52 @@
 
 import { Button } from "@/components/ui/button";
 import { Plane } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Hero = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <section className="relative h-screen flex items-center overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image with parallax effect */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=2600&q=80')",
+          transform: `translateY(${scrollY * 0.2}px)`,
         }}
       >
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
+      {/* Animated clouds */}
+      <div className="absolute top-1/4 -left-20 w-40 h-20 bg-white/20 rounded-full blur-xl animate-float"></div>
+      <div className="absolute top-1/3 left-1/2 w-60 h-20 bg-white/10 rounded-full blur-xl animate-float" style={{ animationDelay: "2s" }}></div>
+      <div className="absolute bottom-1/3 right-20 w-40 h-20 bg-white/15 rounded-full blur-xl animate-float" style={{ animationDelay: "1s" }}></div>
+
+      {/* Animated plane path */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute top-20 -left-20 animate-plane-path">
+          <Plane className="h-12 w-12 text-white/80 rotate-12" />
+        </div>
+      </div>
+
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 text-white">
-        <div className="max-w-3xl">
+        <div className="max-w-3xl animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Learn to Fly with Melbourne's Premier Flight School
           </h1>
@@ -29,16 +56,18 @@ const Hero = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              className="bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 px-8 rounded-md flex items-center gap-2"
+              className="bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 px-8 rounded-md flex items-center gap-2 hover:scale-105 transition-all duration-300"
               size="lg"
+              onClick={() => document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" })}
             >
               <Plane className="h-5 w-5" />
               Book a Trial Flight
             </Button>
             <Button 
               variant="outline" 
-              className="bg-white/10 backdrop-blur-sm border-white hover:bg-white/20 text-white text-lg py-6 px-8 rounded-md"
+              className="bg-white/10 backdrop-blur-sm border-white hover:bg-white/20 text-white text-lg py-6 px-8 rounded-md hover:scale-105 transition-all duration-300"
               size="lg"
+              onClick={() => document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" })}
             >
               Explore Courses
             </Button>

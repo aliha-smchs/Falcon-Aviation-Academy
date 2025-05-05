@@ -117,12 +117,43 @@ export default {
 					'50%': {
 						transform: 'translateY(-10px)'
 					}
+				},
+				'plane-path': {
+					'0%': {
+						transform: 'translate(-100px, 0) rotate(10deg)'
+					},
+					'100%': {
+						transform: 'translate(calc(100vw + 100px), 0) rotate(10deg)'
+					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'fade-in-right': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(-20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float': 'float 6s ease-in-out infinite'
+				'float': 'float 6s ease-in-out infinite',
+				'plane-path': 'plane-path 15s linear infinite',
+				'fade-in': 'fade-in 0.7s ease-out',
+				'fade-in-right': 'fade-in-right 0.5s ease-out'
 			}
 		}
 	},

@@ -7,17 +7,34 @@ import Testimonials from "@/components/Testimonials";
 import AircraftFleet from "@/components/AircraftFleet";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
       <Hero />
-      <Courses />
-      <Instructors />
-      <AircraftFleet />
-      <Testimonials />
-      <CallToAction />
+      
+      <ScrollReveal className="section-gradient">
+        <Courses />
+      </ScrollReveal>
+      
+      <ScrollReveal className="section-gradient-alt">
+        <Instructors />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <AircraftFleet />
+      </ScrollReveal>
+      
+      <ScrollReveal className="section-gradient">
+        <Testimonials />
+      </ScrollReveal>
+      
+      <ScrollReveal>
+        <CallToAction />
+      </ScrollReveal>
+      
       <Footer />
     </div>
   );
