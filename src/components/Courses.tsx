@@ -7,7 +7,7 @@ const Courses = () => {
     {
       title: "Private Pilot License (PPL)",
       description: "Begin your journey to become a licensed pilot with our comprehensive PPL course.",
-      icon: <Plane className="h-10 w-10 text-flyhub-blue" />,
+      icon: <Plane className="h-10 w-10" />,
       duration: "50-60 flight hours • 3-6 months",
       details: [
         "Learn essential flight maneuvers",
@@ -20,7 +20,7 @@ const Courses = () => {
     {
       title: "Commercial Pilot License (CPL)",
       description: "Take your skills to a professional level and open doors to paid flying opportunities.",
-      icon: <Route className="h-10 w-10 text-flyhub-blue" />,
+      icon: <Route className="h-10 w-10" />,
       duration: "200+ flight hours • 6-12 months",
       details: [
         "Advanced aircraft handling",
@@ -33,7 +33,7 @@ const Courses = () => {
     {
       title: "Instrument Rating (IR)",
       description: "Learn to fly safely in poor visibility conditions using only aircraft instruments.",
-      icon: <Navigation className="h-10 w-10 text-flyhub-blue" />,
+      icon: <Navigation className="h-10 w-10" />,
       duration: "40+ flight hours • 2-4 months",
       details: [
         "Instrument scanning techniques",
@@ -46,7 +46,7 @@ const Courses = () => {
     {
       title: "Flight Instructor (CFI)",
       description: "Share your knowledge and passion for aviation by becoming a certified flight instructor.",
-      icon: <Map className="h-10 w-10 text-flyhub-blue" />,
+      icon: <Map className="h-10 w-10" />,
       duration: "25+ flight hours • 1-3 months",
       details: [
         "Teaching methodologies",
@@ -59,11 +59,11 @@ const Courses = () => {
   ];
 
   return (
-    <section id="courses" className="py-20 bg-flyhub-gray">
+    <section id="courses" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="section-title">Flight Training Courses</h2>
-          <p className="section-subtitle">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">Flight Training Courses</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             From your first flight to advanced ratings, we offer comprehensive programs to meet your aviation goals.
           </p>
         </div>

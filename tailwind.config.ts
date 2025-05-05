@@ -86,14 +86,6 @@ export default {
 					700: '#1d4ed8',
 					800: '#1e40af',
 					900: '#1e3a8a',
-				},
-				// Add new color palette for FLYHUB-inspired design
-				flyhub: {
-					blue: '#0073e6',
-					darkBlue: '#005bb5',
-					lightBlue: '#4da6ff',
-					gray: '#f5f7fa',
-					darkGray: '#333333',
 				}
 			},
 			borderRadius: {
