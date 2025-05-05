@@ -13,30 +13,23 @@ const Hero = () => {
             "url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=2600&q=80')",
         }}
       >
-        {/* Dark overlay with blue tint */}
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-900/80 to-navy-800/60"></div>
-        
-        {/* Cloud overlay */}
-        <div className="cloud-overlay"></div>
-        
-        {/* Animated flight path */}
-        <div className="flight-path"></div>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 text-white">
         <div className="max-w-3xl">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 font-display">
-            <span className="block">Soar Beyond Limits</span>
-            <span className="text-gold-400">Melbourne's Premier Flight School</span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Learn to Fly with Melbourne's Premier Flight School
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-silver-200 max-w-2xl">
+          <p className="text-xl md:text-2xl mb-8 text-gray-100">
             World-class training, modern aircraft, and experienced instructors to
             help you soar to new heights.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              className="bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 px-8 rounded-md flex items-center gap-2 shadow-lg shadow-sky-700/30 hover:shadow-sky-700/50 transition-all"
+              className="bg-sky-600 hover:bg-sky-700 text-white text-lg py-6 px-8 rounded-md flex items-center gap-2"
               size="lg"
             >
               <Plane className="h-5 w-5" />

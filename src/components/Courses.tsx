@@ -62,7 +62,7 @@ const Courses = () => {
     <section id="courses" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 premium-gradient-text font-display">Flight Training Courses</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 gradient-text">Flight Training Courses</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             From your first flight to advanced ratings, we offer comprehensive programs to meet your aviation goals.
           </p>
