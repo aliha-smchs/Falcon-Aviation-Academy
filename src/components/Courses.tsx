@@ -67,7 +67,7 @@ const Courses = () => {
         height="1636"
         decoding="async"
         className="absolute top-1/2 left-1/2 max-w-none translate-x-[-44%] translate-y-[-42%] opacity-80 rotate-360"
-        src="/background-features.5f7a9ac9.jpg"
+        src="./background-features.5f7a9ac9.jpg"
       />
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
