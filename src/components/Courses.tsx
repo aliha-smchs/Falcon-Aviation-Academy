@@ -1,127 +1,164 @@
-import { Plane, Route, Navigation, Map } from "lucide-react";
-import CourseCard from "./CourseCard";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Plane, Route, Navigation, Settings } from "lucide-react";
 
 const Courses = () => {
-  const courses = [
+  const [selectedTab, setSelectedTab] = useState(0);
+  
+  const features = [
     {
-      title: "Private Pilot License (PPL)",
-      description: "Begin your journey to become a licensed pilot with our comprehensive PPL course.",
-      icon: <Plane className="h-10 w-10" />,
-      duration: "50-60 flight hours • 3-6 months",
-      details: [
-        "Learn essential flight maneuvers",
-        "Navigation and flight planning",
-        "Solo flying experience",
-        "Cross-country flights",
-        "FAA written exam preparation"
+      name: "Core Licenses",
+      description: "Start your aviation journey with our comprehensive training programs, from first flight to commercial license.",
+      icon: <Plane className="w-5 h-5" />,
+      content: [
+        {
+          title: "Trial Introductory Flight (TIF)",
+          description: "Experience the thrill of flying and see if aviation is right for you",
+          details: "Single flight session • Perfect for beginners"
+        },
+        {
+          title: "Recreational Pilots License (RPL)",
+          description: "Your first step into becoming a licensed pilot",
+          details: "20+ hours • Basic aviation fundamentals"
+        },
+        {
+          title: "Private Pilots License (PPL)",
+          description: "Expand your flying capabilities and fly for private purposes",
+          details: "40+ hours • Advanced flight operations"
+        }
       ]
     },
     {
-      title: "Commercial Pilot License (CPL)",
-      description: "Take your skills to a professional level and open doors to paid flying opportunities.",
-      icon: <Route className="h-10 w-10" />,
-      duration: "200+ flight hours • 6-12 months",
-      details: [
-        "Advanced aircraft handling",
-        "Complex aircraft operations",
-        "Multi-engine training",
-        "Night flying proficiency",
-        "Commercial operations preparation"
+      name: "Advanced Training",
+      description: "Take your career to the next level with our professional pilot training programs.",
+      icon: <Navigation className="w-5 h-5" />,
+      content: [
+        {
+          title: "Commercial Pilots License (CPL)",
+          description: "Non-Integrated pathway to becoming a professional pilot",
+          details: "200+ hours • Professional aviation career"
+        }
       ]
     },
     {
-      title: "Instrument Rating (IR)",
-      description: "Learn to fly safely in poor visibility conditions using only aircraft instruments.",
-      icon: <Navigation className="h-10 w-10" />,
-      duration: "40+ flight hours • 2-4 months",
-      details: [
-        "Instrument scanning techniques",
-        "IFR flight planning",
-        "Holding patterns and approaches",
-        "Simulated instrument conditions",
-        "Emergency procedures"
-      ]
-    },
-    {
-      title: "Flight Instructor (CFI)",
-      description: "Share your knowledge and passion for aviation by becoming a certified flight instructor.",
-      icon: <Map className="h-10 w-10" />,
-      duration: "25+ flight hours • 1-3 months",
-      details: [
-        "Teaching methodologies",
-        "Student evaluation techniques",
-        "Lesson planning",
-        "Demonstration of maneuvers",
-        "Fundamentals of instruction"
+      name: "Design Feature Endorsements",
+      description: "Specialized training for advanced aircraft systems and configurations.",
+      icon: <Settings className="w-5 h-5" />,
+      content: [
+        {
+          title: "Manual-Propeller Pitch Control",
+          description: "Constant speed rating endorsement for advanced propeller control",
+          details: "Specialized training • Technical competency"
+        },
+        {
+          title: "Retractable Undercarriage",
+          description: "Training for aircraft with retractable landing gear systems",
+          details: "Specialized training • Technical competency"
+        }
       ]
     }
   ];
 
   return (
-    <section id="courses" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy-800">Flight Training Courses</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            From your first flight to advanced ratings, we offer comprehensive programs to meet your aviation goals.
+    <section id="features" aria-label="Features" className="relative overflow-hidden bg-blue-600 pb-28 sm:py-32">
+      <img
+        alt=""
+        loading="lazy"
+        width="2245"
+        height="1636"
+        decoding="async"
+        className="absolute top-1/2 left-1/2 max-w-none translate-x-[-44%] translate-y-[-42%] opacity-80 rotate-360"
+        src="/background-features.5f7a9ac9.jpg"
+      />
+      
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
+          <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">
+            Flight Training Programs
+          </h2>
+          <p className="mt-6 text-lg tracking-tight text-blue-100">
+            Professional pilot training programs designed to help you achieve your aviation dreams. From first flight to advanced certifications.
           </p>
         </div>
-        
-        {/* Modern table-like design inspired by the screenshot */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-          <div className="hidden md:grid md:grid-cols-5 text-sm font-medium text-gray-500 bg-gray-50 px-6 py-3">
-            <div className="col-span-2">Course Name</div>
-            <div>Duration</div>
-            <div>Prerequisites</div>
-            <div>Cost</div>
+
+        <div className="mt-16 grid grid-cols-1 items-start gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0">
+          <div className="-mx-4 flex overflow-x-auto pb-4 sm:mx-0 sm:overflow-visible sm:pb-0 lg:col-span-5">
+            <div className="relative z-10 flex gap-x-4 px-4 sm:mx-auto sm:px-0 lg:mx-0 lg:block lg:gap-x-0 lg:gap-y-1 lg:whitespace-normal" role="tablist" aria-orientation="vertical">
+              {features.map((feature, featureIndex) => (
+                <div
+                  key={feature.name}
+                  className={`group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6 ${
+                    featureIndex === selectedTab
+                      ? "bg-white lg:bg-white/10 lg:ring-1 lg:ring-white/10 lg:ring-inset"
+                      : "hover:bg-white/10 lg:hover:bg-white/5"
+                  }`}
+                >
+                  <h3>
+                    <button
+                      className={`font-display text-lg [&[data-state=selected]]:text-blue-600 lg:[&[data-state=selected]]:text-white ${
+                        featureIndex === selectedTab
+                          ? "text-blue-600 lg:text-white"
+                          : "text-blue-100 hover:text-white lg:text-white"
+                      }`}
+                      role="tab"
+                      type="button"
+                      onClick={() => setSelectedTab(featureIndex)}
+                      aria-selected={featureIndex === selectedTab}
+                      data-state={featureIndex === selectedTab ? "selected" : ""}
+                      data-headlessui-state={featureIndex === selectedTab ? "selected" : ""}
+                      id={`headlessui-tabs-tab-${featureIndex}`}
+                      aria-controls={`headlessui-tabs-panel-${featureIndex}`}
+                    >
+                      <span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none"></span>
+                      {feature.name}
+                    </button>
+                  </h3>
+                  <p className="mt-2 hidden text-sm lg:block text-blue-100 group-hover:text-white">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          
-          {courses.map((course, index) => (
-            <div 
-              key={index} 
-              className={`grid md:grid-cols-5 gap-4 px-6 py-4 hover:bg-sky-50 transition-colors ${
-                index !== courses.length - 1 ? "border-b border-gray-100" : ""
-              }`}
-            >
-              <div className="col-span-2 flex items-center gap-3">
-                <div className="p-2 rounded-md bg-sky-100 text-sky-600">{course.icon}</div>
-                <div>
-                  <h3 className="font-semibold text-navy-800">{course.title}</h3>
-                  <p className="text-sm text-gray-500 hidden md:block">{course.description}</p>
+
+          <div className="lg:col-span-7 w-full">
+            {features.map((feature, featureIndex) => (
+              <div
+                key={featureIndex}
+                role="tabpanel"
+                id={`headlessui-tabs-panel-${featureIndex}`}
+                aria-labelledby={`headlessui-tabs-tab-${featureIndex}`}
+                tabIndex={featureIndex === selectedTab ? 0 : -1}
+                data-headlessui-state={featureIndex === selectedTab ? "selected" : ""}
+                style={{ display: featureIndex === selectedTab ? undefined : "none" }}
+                hidden={featureIndex !== selectedTab}
+                className="w-full"
+              >
+                <div className="relative sm:px-6 lg:hidden">
+                  <div className="absolute -inset-x-4 top-[-6.5rem] bottom-[-4.25rem] bg-white/10 ring-1 ring-white/10 ring-inset sm:inset-x-0 sm:rounded-t-xl"></div>
+                  <p className="relative mx-auto max-w-2xl text-base text-white sm:text-center">
+                    {feature.description}
+                  </p>
+                </div>
+
+                <div className="mt-10 w-full overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0">
+                  <div className="p-8">
+                    {feature.content.map((item, index) => (
+                      <div key={index} className="flex gap-6 mb-8 last:mb-0">
+                        <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 text-blue-600">
+                          {feature.icon}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                          <p className="mt-2 text-sm text-gray-600">{item.description}</p>
+                          <p className="mt-1 text-sm text-blue-600">{item.details}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="text-sm text-gray-600 flex items-center">{course.duration}</div>
-              <div className="text-sm text-gray-600 flex items-center">
-                {index > 0 ? "Previous license required" : "None"}
-              </div>
-              <div className="flex items-center">
-                <span className="font-medium text-navy-800">
-                  ${(5000 + index * 2500).toLocaleString()}
-                </span>
-                <Button 
-                  className="ml-auto bg-navy-800 hover:bg-navy-900 text-white text-xs py-1 px-3"
-                  onClick={() => console.log(`Learn more about ${course.title}`)}
-                >
-                  Details
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        {/* Mobile version of courses for small screens */}
-        <div className="mt-8 grid grid-cols-1 gap-6 md:hidden">
-          {courses.map((course, index) => (
-            <CourseCard 
-              key={index}
-              title={course.title}
-              description={course.description}
-              icon={course.icon}
-              duration={course.duration}
-              details={course.details}
-            />
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
