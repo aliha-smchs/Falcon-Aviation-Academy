@@ -11,7 +11,7 @@ const Courses = () => {
       icon: <Plane className="w-5 h-5" />,
       content: [
         {
-          title: "Trial Introductory Flight (TIF)",
+          title: "Trial Introductory Flight (TIF) Beginner",
           description: "Experience the thrill of flying and see if aviation is right for you",
           details: "Single flight session • Perfect for beginners"
         },
