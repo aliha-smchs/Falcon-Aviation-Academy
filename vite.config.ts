@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '//Falcon-Aviation-Academy/', // Base path for GitHub Pages
+  base: '/Falcon-Aviation-Academy/', // Base path for GitHub Pages
   server: {
     host: "::",
     port: 8080,
