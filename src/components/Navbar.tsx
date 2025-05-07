@@ -39,7 +39,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         <a href="#" className="flex items-center space-x-2">
           <Plane className={`h-8 w-8 ${isScrolled ? 'text-sky-600' : 'text-white'} transition-colors`} />
-          <span className={`font-bold text-xl ${isScrolled ? 'text-navy-900' : 'text-white'} transition-colors`}>Melbourne Flight Academy</span>
+          <span className={`font-bold text-xl ${isScrolled ? 'text-navy-900' : 'text-white'} transition-colors`}>Falcon International Aviation Academy</span>
         </a>
         
         {/* Desktop Menu */}

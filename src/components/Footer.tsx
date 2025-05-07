@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center mb-4">
               <Plane className="h-8 w-8 text-sky-400 mr-2" />
-              <span className="font-bold text-xl">Melbourne Flight Academy</span>
+              <span className="font-bold text-xl">Falcon International Aviation Academy</span>
             </div>
             <p className="text-gray-300 mb-4">
               Your journey to the skies begins here. Melbourne's premier flight training school offering comprehensive programs for all levels.
@@ -102,7 +102,7 @@ const Footer = () => {
         </div>
         
         <div className="mt-12 pt-8 border-t border-navy-800 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Melbourne Flight Academy. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Falcon International Aviation Academy. All rights reserved.</p>
         </div>
       </div>
     </footer>

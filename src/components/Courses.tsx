@@ -120,7 +120,7 @@ const Courses = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-7 w-full">
+          <div className="lg:col-span-7 h-[400]px">
             {features.map((feature, featureIndex) => (
               <div
                 key={featureIndex}
@@ -140,8 +140,8 @@ const Courses = () => {
                   </p>
                 </div>
 
-                <div className="mt-10 w-full overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0">
-                  <div className="p-8">
+                <div className="mt-10 w-[200px] h-[352px] overflow-hidden bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0">
+                  <div className="p-8 ">
                     {feature.content.map((item, index) => (
                       <div key={index} className="flex gap-6 mb-8 last:mb-0">
                         <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 text-blue-600">

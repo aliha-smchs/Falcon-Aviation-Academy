@@ -4,7 +4,7 @@ import TestimonialCard from "./TestimonialCard";
 const Testimonials = () => {
   const testimonials = [
     {
-      quote: "The instructors at Melbourne Flight Academy made my dream of flying a reality. Their patience and expertise helped me overcome my initial nervousness and build confidence in the cockpit.",
+      quote: "The instructors at Falcon International Aviation Academy made my dream of flying a reality. Their patience and expertise helped me overcome my initial nervousness and build confidence in the cockpit.",
       name: "Michael Johnson",
       title: "PPL Graduate",
       image: "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&q=80&w=400"
