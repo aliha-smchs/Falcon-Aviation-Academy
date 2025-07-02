@@ -8,13 +8,16 @@ import AircraftFleet from "@/components/AircraftFleet";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import VideoSection from '@/components/VideoSection';
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
       <Hero />
-      
+      <ScrollReveal className="section-gradient-alt">
+        <VideoSection />
+      </ScrollReveal>
       <ScrollReveal>
         <Courses />
       </ScrollReveal>
