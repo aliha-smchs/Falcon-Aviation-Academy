@@ -62,15 +62,13 @@ export interface StrapiEntity<T> {
 export interface CMSAircraftAttributes {
   name: string;
   model: string;
-  type: 'Single-Engine Piston' | 'Multi-Engine Piston' | 'Full Motion Simulator' | 'Fixed Base Simulator';
   seats: number;
-  engineType: string;
+  enginetype: string; // Note: this matches the Strapi schema field name
   speed: string;
   range: string;
   features: string[];
-  description?: string;
   isActive: boolean;
-  category: 'training' | 'multi-engine' | 'simulators';
+  category: string[];
   image: {
     data: StrapiEntity<StrapiMedia>;
   };

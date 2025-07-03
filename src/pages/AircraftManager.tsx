@@ -23,14 +23,12 @@ const AircraftManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     model: '',
-    type: 'Single-Engine Piston' as 'Single-Engine Piston' | 'Multi-Engine Piston' | 'Full Motion Simulator' | 'Fixed Base Simulator',
     seats: 1,
-    engineType: '',
+    enginetype: '',
     speed: '',
     range: '',
     features: '',
-    category: 'training' as 'training' | 'multi-engine' | 'simulators',
-    description: '',
+    category: '',
     isActive: true,
   });
 
@@ -38,14 +36,12 @@ const AircraftManager = () => {
     setFormData({
       name: '',
       model: '',
-      type: 'Single-Engine Piston',
       seats: 1,
-      engineType: '',
+      enginetype: '',
       speed: '',
       range: '',
       features: '',
-      category: 'training',
-      description: '',
+      category: '',
       isActive: true,
     });
     setEditingId(null);
@@ -58,6 +54,7 @@ const AircraftManager = () => {
     const aircraftData = {
       ...formData,
       features: formData.features.split(',').map(f => f.trim()).filter(f => f.length > 0),
+      category: [formData.category], // Ensure category is an array
     };
 
     try {
@@ -76,14 +73,12 @@ const AircraftManager = () => {
     setFormData({
       name: aircraftItem.attributes.name,
       model: aircraftItem.attributes.model,
-      type: aircraftItem.attributes.type,
       seats: aircraftItem.attributes.seats,
-      engineType: aircraftItem.attributes.engineType,
+      enginetype: aircraftItem.attributes.enginetype,
       speed: aircraftItem.attributes.speed,
       range: aircraftItem.attributes.range,
       features: aircraftItem.attributes.features.join(', '),
-      category: aircraftItem.attributes.category,
-      description: aircraftItem.attributes.description || '',
+      category: Array.isArray(aircraftItem.attributes.category) ? aircraftItem.attributes.category[0] : aircraftItem.attributes.category,
       isActive: aircraftItem.attributes.isActive,
     });
     setEditingId(aircraftItem.id);
@@ -170,20 +165,7 @@ const AircraftManager = () => {
                   />
                 </div>
                 
-                <div>
-                  <Label htmlFor="type">Type</Label>
-                  <Select value={formData.type} onValueChange={(value: any) => setFormData(prev => ({ ...prev, type: value }))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Single-Engine Piston">Single-Engine Piston</SelectItem>
-                      <SelectItem value="Multi-Engine Piston">Multi-Engine Piston</SelectItem>
-                      <SelectItem value="Full Motion Simulator">Full Motion Simulator</SelectItem>
-                      <SelectItem value="Fixed Base Simulator">Fixed Base Simulator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                
                 
                 <div>
                   <Label htmlFor="category">Category</Label>
@@ -192,9 +174,9 @@ const AircraftManager = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="training">Training Aircraft</SelectItem>
-                      <SelectItem value="multi-engine">Multi-Engine Aircraft</SelectItem>
-                      <SelectItem value="simulators">Flight Simulators</SelectItem>
+                      <SelectItem value="Training Aircraft">Training Aircraft</SelectItem>
+                      <SelectItem value="Multi-Engine Aircarft">Multi-Engine Aircraft</SelectItem>
+                      <SelectItem value="Flight Simulators">Flight Simulators</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -215,8 +197,8 @@ const AircraftManager = () => {
                   <Label htmlFor="engineType">Engine Type</Label>
                   <Input
                     id="engineType"
-                    value={formData.engineType}
-                    onChange={(e) => setFormData(prev => ({ ...prev, engineType: e.target.value }))}
+                    value={formData.enginetype}
+                    onChange={(e) => setFormData(prev => ({ ...prev, enginetype: e.target.value }))}
                     required
                   />
                 </div>
@@ -252,15 +234,7 @@ const AircraftManager = () => {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={3}
-                />
-              </div>
+              
               
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -287,13 +261,13 @@ const AircraftManager = () => {
                   {aircraftItem.attributes.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
-              <p className="text-sm text-gray-600">{aircraftItem.attributes.type}</p>
+              
             </CardHeader>
             <CardContent>
               <div className="space-y-2 text-sm">
                 <p><strong>Model:</strong> {aircraftItem.attributes.model}</p>
                 <p><strong>Seats:</strong> {aircraftItem.attributes.seats}</p>
-                <p><strong>Engine:</strong> {aircraftItem.attributes.engineType}</p>
+                <p><strong>Engine:</strong> {aircraftItem.attributes.enginetype}</p>
                 <p><strong>Speed:</strong> {aircraftItem.attributes.speed}</p>
                 <p><strong>Range:</strong> {aircraftItem.attributes.range}</p>
                 <p><strong>Category:</strong> {aircraftItem.attributes.category}</p>

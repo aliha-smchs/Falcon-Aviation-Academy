@@ -13,15 +13,16 @@ type AircraftProps = {
   model: string;
   name: string;
   image: string;
-  type: string;
   seats: number;
   engineType: string;
   speed: string;
   range: string;
   features: string[];
+  category?: string[];
 };
 
 const AircraftCard = ({ aircraft }: { aircraft: AircraftProps }) => {
+  console.log("Rendering AircraftCard for:", aircraft.name);
   return (
     <Card className="overflow-hidden h-full">
       <div className="aspect-video overflow-hidden">
@@ -34,8 +35,8 @@ const AircraftCard = ({ aircraft }: { aircraft: AircraftProps }) => {
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-xl font-bold text-navy-900">{aircraft.name}</h3>
-            <p className="text-gray-500">{aircraft.type}</p>
+            <h3 className="text-xl font-semibold mb-1">{aircraft.name}</h3>
+            <p className="text-gray-600">{aircraft.model}</p>
           </div>
           <Badge className="bg-sky-100 text-sky-800 hover:bg-sky-200">
             {aircraft.seats} Seats
@@ -73,20 +74,20 @@ const AircraftCard = ({ aircraft }: { aircraft: AircraftProps }) => {
 };
 
 // Helper function to transform CMS aircraft data to component props
-const transformCMSAircraft = (cmsAircraft: CMSAircraft): AircraftProps => {
-  const { id, attributes } = cmsAircraft;
+const transformCMSAircraft = (cmsAircraft: any): AircraftProps => {
+  console.log("Transforming CMS Aircraft:", cmsAircraft.name);
   return {
-    id,
-    name: attributes.name,
-    image: attributes.image?.data 
-      ? cmsService.getImageUrl(attributes.image.data.attributes.url)
+    id: cmsAircraft.id,
+    name: cmsAircraft.name || 'Unknown Aircraft',
+    model: cmsAircraft.model || 'Unknown Model',
+    image: cmsAircraft.image?.data 
+      ? cmsService.getImageUrl(cmsAircraft.image.data.attributes.url)
       : 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?auto=format&fit=crop&q=80&w=1500',
-    type: attributes.type,
-    seats: attributes.seats,
-    engineType: attributes.engineType,
-    speed: attributes.speed,
-    range: attributes.range,
-    features: attributes.features,
+    seats: cmsAircraft.seats || 0,
+    engineType: cmsAircraft.enginetype || 'Unknown Engine',
+    speed: cmsAircraft.speed || 'Unknown Speed',
+    range: cmsAircraft.range || 'Unknown Range',
+    features: cmsAircraft.features || [],
   };
 };
 
@@ -149,15 +150,15 @@ const AircraftFleet = () => {
           </TabsList>
           
           <TabsContent value="training" className="mt-0">
-            <AircraftCategoryContent category="training" />
+            <AircraftCategoryContent category="Training Aircraft" />
           </TabsContent>
           
           <TabsContent value="multi-engine" className="mt-0">
-            <AircraftCategoryContent category="multi-engine" />
+            <AircraftCategoryContent category="Multi-Engine Aircarft" />
           </TabsContent>
           
           <TabsContent value="simulators" className="mt-0">
-            <AircraftCategoryContent category="simulators" />
+            <AircraftCategoryContent category="Flight Simulators" />
           </TabsContent>
         </Tabs>
       </div>

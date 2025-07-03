@@ -128,7 +128,7 @@ class CMSService {
     try {
       const populateQuery = populate ? '?populate=image' : '';
       const response: AxiosResponse<StrapiResponse<CMSAircraft[]>> = 
-        await this.api.get(`/aircraft${populateQuery}`);
+        await this.api.get(`/aircrafts${populateQuery}`);
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
@@ -138,7 +138,7 @@ class CMSService {
   async getAircraftById(id: number): Promise<CMSAircraft> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSAircraft>> = 
-        await this.api.get(`/aircraft/${id}?populate=image`);
+        await this.api.get(`/aircrafts/${id}?populate=image`);
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
@@ -148,7 +148,7 @@ class CMSService {
   async getAircraftByCategory(category: string): Promise<CMSAircraft[]> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSAircraft[]>> = 
-        await this.api.get(`/aircraft?filters[category][$eq]=${category}&populate=image`);
+        await this.api.get(`/aircrafts?filters[category][$eq]=${category}&populate=image`);
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
@@ -215,7 +215,7 @@ class CMSService {
   async createAircraft(data: Partial<CMSAircraftAttributes>): Promise<CMSAircraft> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSAircraft>> = 
-        await this.api.post('/aircraft', { data });
+        await this.api.post('/aircrafts', { data });
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
@@ -225,7 +225,7 @@ class CMSService {
   async updateAircraft(id: number, data: Partial<CMSAircraftAttributes>): Promise<CMSAircraft> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSAircraft>> = 
-        await this.api.put(`/aircraft/${id}`, { data });
+        await this.api.put(`/aircrafts/${id}`, { data });
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
@@ -234,7 +234,7 @@ class CMSService {
 
   async deleteAircraft(id: number): Promise<void> {
     try {
-      await this.api.delete(`/aircraft/${id}`);
+      await this.api.delete(`/aircrafts/${id}`);
     } catch (error) {
       throw this.handleError(error);
     }
