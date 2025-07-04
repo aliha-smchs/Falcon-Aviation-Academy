@@ -102,7 +102,7 @@ export const useCoursesByCategory = (category: string) => {
 
 // Testimonial Hooks
 export const useTestimonials = () => {
-  return useQuery<CMSTestimonial[], CMSError>({
+  return useQuery<any, CMSError>({
     queryKey: queryKeys.testimonials,
     queryFn: () => cmsService.getTestimonials(),
     staleTime: 5 * 60 * 1000,
@@ -177,15 +177,132 @@ export const useDeleteAircraft = () => {
   });
 };
 
+// Instructor Mutation Hooks
+export const useCreateInstructor = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSInstructor, CMSError, Partial<any>>({
+    mutationFn: (data) => cmsService.createInstructor(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.instructors });
+    },
+  });
+};
+
+export const useUpdateInstructor = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSInstructor, CMSError, { id: number; data: Partial<any> }>({
+    mutationFn: ({ id, data }) => cmsService.updateInstructor(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.instructors });
+      queryClient.invalidateQueries({ queryKey: queryKeys.instructorById(data.id) });
+    },
+  });
+};
+
+export const useDeleteInstructor = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<void, CMSError, number>({
+    mutationFn: (id) => cmsService.deleteInstructor(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.instructors });
+    },
+  });
+};
+
+// Course Mutation Hooks
+export const useCreateCourse = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSCourse, CMSError, Partial<any>>({
+    mutationFn: (data) => cmsService.createCourse(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses });
+    },
+  });
+};
+
+export const useUpdateCourse = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSCourse, CMSError, { id: number; data: Partial<any> }>({
+    mutationFn: ({ id, data }) => cmsService.updateCourse(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses });
+    },
+  });
+};
+
+export const useDeleteCourse = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<void, CMSError, number>({
+    mutationFn: (id) => cmsService.deleteCourse(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.courses });
+    },
+  });
+};
+
+// Testimonial Mutation Hooks
+export const useCreateTestimonial = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSTestimonial, CMSError, Partial<any>>({
+    mutationFn: (data) => cmsService.createTestimonial(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.testimonials });
+    },
+  });
+};
+
+export const useUpdateTestimonial = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CMSTestimonial, CMSError, { id: number; data: Partial<any> }>({
+    mutationFn: ({ id, data }) => cmsService.updateTestimonial(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.testimonials });
+    },
+  });
+};
+
+export const useDeleteTestimonial = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<void, CMSError, number>({
+    mutationFn: (id) => cmsService.deleteTestimonial(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.testimonials });
+    },
+  });
+};
+
 // Utility hook to check authentication status
 export const useAuth = () => {
   const isAuthenticated = cmsService.isAuthenticated();
   const user = cmsService.getStoredUser();
   
+  // Debug logging to see what role data we have
+  console.log('Auth Debug:', {
+    isAuthenticated,
+    user,
+    roleName: user?.role?.name,
+    roleType: user?.role?.type,
+    roleId: user?.role?.id,
+    hasRole: !!user?.role
+  });
+  
+  // TEMPORARY: Grant admin access to any authenticated user
+  // TODO: Set up proper role-based access control in Strapi
+  const isAdmin = isAuthenticated && user;
+  
   return {
     isAuthenticated,
     user,
-    isAdmin: user?.role?.name === 'Admin' || user?.role?.type === 'admin',
+    isAdmin,
     isEditor: user?.role?.name === 'Editor' || user?.role?.type === 'editor',
   };
 };

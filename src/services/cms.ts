@@ -100,9 +100,56 @@ class CMSService {
       const { jwt, user } = response.data;
       
       this.setStoredToken(jwt);
-      this.setStoredUser(user);
       
-      return response.data;
+      // Try multiple approaches to get user with role information
+      let userWithRole = user;
+      
+      try {
+        // First try: users/me with populate
+        const userResponse: AxiosResponse<any> = await this.api.get('/users/me?populate=role');
+        console.log('User response:', userResponse.data);
+        
+        if (userResponse.data.role) {
+          userWithRole = userResponse.data;
+        } else {
+          // Second try: users/me with populate=*
+          const userResponse2: AxiosResponse<any> = await this.api.get('/users/me?populate=*');
+          console.log('User response with populate=*:', userResponse2.data);
+          
+          if (userResponse2.data.role) {
+            userWithRole = userResponse2.data;
+          } else {
+            // Third try: fetch user by ID with role
+            const userResponse3: AxiosResponse<any> = await this.api.get(`/users/${user.id}?populate=role`);
+            console.log('User response by ID:', userResponse3.data);
+            
+            if (userResponse3.data.role) {
+              userWithRole = userResponse3.data;
+            }
+          }
+        }
+      } catch (userError) {
+        console.warn('Failed to fetch user with role:', userError);
+        
+        // If all methods fail, create a default role for authenticated users
+        userWithRole = {
+          ...user,
+          role: {
+            id: 1,
+            name: 'Authenticated',
+            type: 'authenticated',
+            description: 'Default role given to authenticated user.'
+          }
+        };
+      }
+      
+      console.log('Final user with role:', userWithRole);
+      this.setStoredUser(userWithRole);
+      
+      return {
+        jwt,
+        user: userWithRole
+      };
     } catch (error) {
       throw this.handleError(error);
     }
@@ -181,31 +228,42 @@ class CMSService {
   async getCourses(populate = true): Promise<CMSCourse[]> {
     try {
       const populateQuery = populate ? '?populate=instructor.image' : '';
+      // Create a request without authentication for public courses endpoint
       const response: AxiosResponse<StrapiResponse<CMSCourse[]>> = 
-        await this.api.get(`/courses${populateQuery}`);
+        await axios.get(`${this.baseURL}/courses${populateQuery}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async getCoursesByCategory(category: string): Promise<CMSCourse[]> {
-    try {
-      const response: AxiosResponse<StrapiResponse<CMSCourse[]>> = 
-        await this.api.get(`/courses?filters[category][$eq]=${category}&populate=instructor.image`);
-      return response.data.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
+async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse[]> {
+  try {
+    const populateQuery = populate ? '&populate=instructor.image' : '';
+    // Create a request without authentication for public courses endpoint
+    const response: AxiosResponse<StrapiResponse<CMSCourse[]>> = 
+      await axios.get(`${this.baseURL}/courses?filters[category][$eq]=${encodeURIComponent(category)}${populateQuery}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    return response.data.data;
+  } catch (error) {
+    throw this.handleError(error);
   }
+}
 
   // Testimonial methods
-  async getTestimonials(populate = true): Promise<CMSTestimonial[]> {
+  async getTestimonials(populate = true): Promise<any> {
     try {
-      const populateQuery = populate ? '?populate=authorImage' : '';
-      const response: AxiosResponse<StrapiResponse<CMSTestimonial[]>> = 
+      const populateQuery = populate ? '?populate=image' : '';
+      const response: AxiosResponse<any> = 
         await this.api.get(`/testimonials${populateQuery}`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -235,6 +293,111 @@ class CMSService {
   async deleteAircraft(id: number): Promise<void> {
     try {
       await this.api.delete(`/aircrafts/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Instructor CRUD methods
+  async createInstructor(data: Partial<any>): Promise<CMSInstructor> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSInstructor>> = 
+        await this.api.post('/instructors', { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async updateInstructor(id: number, data: Partial<any>): Promise<CMSInstructor> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSInstructor>> = 
+        await this.api.put(`/instructors/${id}`, { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async deleteInstructor(id: number): Promise<void> {
+    try {
+      await this.api.delete(`/instructors/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Course CRUD methods
+  async createCourse(data: Partial<any>): Promise<CMSCourse> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSCourse>> = 
+        await this.api.post('/courses', { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async updateCourse(id: number, data: Partial<any>): Promise<CMSCourse> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSCourse>> = 
+        await this.api.put(`/courses/${id}`, { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async deleteCourse(id: number): Promise<void> {
+    try {
+      await this.api.delete(`/courses/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Testimonial CRUD methods
+  async createTestimonial(data: Partial<any>): Promise<CMSTestimonial> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSTestimonial>> = 
+        await this.api.post('/testimonials', { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async updateTestimonial(id: number, data: Partial<any>): Promise<CMSTestimonial> {
+    try {
+      const response: AxiosResponse<StrapiResponse<CMSTestimonial>> = 
+        await this.api.put(`/testimonials/${id}`, { data });
+      return response.data.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  async deleteTestimonial(id: number): Promise<void> {
+    try {
+      await this.api.delete(`/testimonials/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // File upload method
+  async uploadFile(file: File): Promise<any> {
+    try {
+      const formData = new FormData();
+      formData.append('files', file);
+      
+      const response = await this.api.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      return response.data[0]; // Strapi returns an array of uploaded files
     } catch (error) {
       throw this.handleError(error);
     }

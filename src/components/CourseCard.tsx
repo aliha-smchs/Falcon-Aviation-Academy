@@ -12,63 +12,58 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Clock, DollarSign, Users, Award, Plane } from "lucide-react";
+import { CMSCourse } from "@/types/cms";
+import { cmsService } from "@/services/cms";
 
 type CourseCardProps = {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  duration: string;
-  details: string[];
-  // Enhanced course details for the modal
-  fullDescription?: string;
-  prerequisites?: string[];
-  curriculum?: string[];
-  price?: string;
-  maxStudents?: number;
-  certification?: string;
-  location?: string;
-  instructor?: string;
-  nextStartDate?: string;
-  flightHours?: string;
-  groundHours?: string;
-  additionalCourses?: Array<{
-    title: string;
-    description: string;
-    details: string[];
-    fullDescription: string;
-    prerequisites: string[];
-    curriculum: string[];
-    price: string;
-    maxStudents: number;
-    certification: string;
-    location: string;
-    instructor: string;
-    nextStartDate: string;
-    flightHours: string;
-    groundHours: string;
-  }>;
+  course: any; // Using any for now since the API returns a flat structure
+  icon?: React.ReactNode;
+  additionalCourses?: any[];
+};
+
+// Helper function to safely render rich text content
+const renderRichText = (content: any): string => {
+  if (!content) return '';
+  
+  if (typeof content === 'string') {
+    return content;
+  }
+  
+  if (Array.isArray(content)) {
+    return content.map(item => {
+      if (item.type === 'paragraph' && item.children) {
+        return item.children.map((child: any) => child.text || '').join('');
+      }
+      return '';
+    }).join(' ');
+  }
+  
+  return '';
 };
 
 const CourseCard = ({ 
-  title, 
-  description, 
-  icon, 
-  duration, 
-  details,
-  fullDescription,
-  prerequisites = [],
-  curriculum = [],
-  price,
-  maxStudents,
-  certification,
-  location,
-  instructor,
-  nextStartDate,
-  flightHours,
-  groundHours,
+  course,
+  icon = <Plane className="w-6 h-6" />,
   additionalCourses = []
 }: CourseCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Extract data from course object (API returns flat structure)
+  const title = course.title;
+  const description = course.description;
+  const fullDescription = renderRichText(course.fullDescription) || description;
+  const duration = `${course.flightHours || 0} flight hrs • ${course.groundHours || 0} ground hrs`;
+  const details = Array.isArray(course.details) ? course.details : [course.details].filter(Boolean);
+  const prerequisites = course.prerequisites || [];
+  const curriculum = course.curriculum || [];
+  const price = course.price;
+  const maxStudents = course.maxStudents;
+  const certification = course.certification;
+  const location = course.location;
+  const nextStartDate = course.nextStartDate;
+  const flightHours = course.flightHours;
+  const groundHours = course.groundHours;
+  const instructor = course.instructor?.name || course.instructor?.data?.attributes?.name || 'TBD';
 
   return (
     <Card className="h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -241,19 +236,19 @@ const CourseCard = ({
               <div className="mt-8 pt-6 border-t">
                 <h3 className="text-xl font-semibold text-navy-900 mb-4">Other Available Courses</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {additionalCourses.map((course, index) => (
+                  {additionalCourses.map((additionalCourse, index) => (
                     <Card key={index} className="border border-gray-200 hover:border-sky-300 transition-colors">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-lg text-navy-900">{course.title}</CardTitle>
+                        <CardTitle className="text-lg text-navy-900">{additionalCourse.title}</CardTitle>
                         <CardDescription className="text-gray-500">
-                          {course.flightHours} flight hrs • {course.groundHours} ground hrs
+                          {additionalCourse.flightHours} flight hrs • {additionalCourse.groundHours} ground hrs
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-gray-600 mb-2">{course.description}</p>
+                        <p className="text-sm text-gray-600 mb-2">{additionalCourse.description}</p>
                         <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span>{course.certification}</span>
-                          <Badge variant="outline" className="text-sky-600">{course.price}</Badge>
+                          <span>{additionalCourse.certification}</span>
+                          <Badge variant="outline" className="text-sky-600">{additionalCourse.price}</Badge>
                         </div>
                       </CardContent>
                     </Card>

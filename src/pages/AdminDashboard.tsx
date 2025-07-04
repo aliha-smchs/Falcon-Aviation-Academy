@@ -109,6 +109,18 @@ const AdminDashboard = () => {
             <p className="text-gray-600 mb-4">
               You don't have permission to access the admin dashboard.
             </p>
+            
+            {/* Debug information */}
+            <div className="text-xs bg-gray-100 p-3 rounded mb-4 border">
+              <strong>Debug Info:</strong><br/>
+              <strong>User:</strong> {user?.username || 'None'}<br/>
+              <strong>Email:</strong> {user?.email || 'None'}<br/>
+              <strong>Role Name:</strong> {user?.role?.name || 'None'}<br/>
+              <strong>Role Type:</strong> {user?.role?.type || 'None'}<br/>
+              <strong>Role ID:</strong> {user?.role?.id || 'None'}<br/>
+              <strong>Is Admin:</strong> {isAdmin ? 'Yes' : 'No'}
+            </div>
+            
             <Button onClick={handleLogout} variant="outline" className="w-full">
               <LogOut className="h-4 w-4 mr-2" />
               Logout

@@ -97,11 +97,27 @@ export type CMSInstructor = StrapiEntity<CMSInstructorAttributes>;
 export interface CMSCourseAttributes {
   title: string;
   description: string;
+  fullDescription?: any; // Rich text content
   duration: string;
   price?: string;
   details: string[];
-  category: 'core-licenses' | 'advanced-training' | 'endorsements';
+  category: string[]; // Categories like "core-licenses", "advanced-training", etc.
+  
   isActive: boolean;
+  
+  // Training details
+  flightHours?: string;
+  groundHours?: string;
+  maxStudents?: number;
+  certification?: string;
+  location?: string;
+  nextStartDate?: string;
+  
+  // Course content
+  prerequisites?: string[];
+  curriculum?: string[];
+  
+  // Relations
   instructor?: {
     data: CMSInstructor;
   };

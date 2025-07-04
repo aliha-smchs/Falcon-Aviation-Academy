@@ -4,23 +4,77 @@ import { useTestimonials } from "@/hooks/useCMS";
 import { cmsService } from "@/services/cms";
 import { ErrorState, NetworkError } from "@/components/ui/error-state";
 import { TestimonialCardSkeleton, LoadingGrid } from "@/components/ui/loading-skeletons";
-import { CMSTestimonial } from "@/types/cms";
+
+// Define interface based on new API response format
+interface TestimonialResponse {
+  data: TestimonialData[];
+  meta: {
+    pagination: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    }
+  }
+}
+
+interface TestimonialData {
+  id: number;
+  documentId: string;
+  quote: {
+    type: string;
+    children: {
+      type: string;
+      text: string;
+    }[]
+  }[];
+  name: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  image:string;
+}
 
 // Helper function to transform CMS testimonial data
-const transformCMSTestimonial = (cmsTestimonial: CMSTestimonial) => {
-  const { attributes } = cmsTestimonial;
+const transformCMSTestimonial = (cmsTestimonial: any) => {
+  // Transform testimonial data to match our component's needs
+  
+  // Extract text from rich text quote field
+  let quoteText = 'No quote available';
+  try {
+    if (Array.isArray(cmsTestimonial.quote) && cmsTestimonial.quote.length > 0) {
+      const paragraph = cmsTestimonial.quote[0];
+      if (paragraph && Array.isArray(paragraph.children)) {
+        quoteText = paragraph.children
+          .map((child: any) => child && typeof child.text === 'string' ? child.text : '')
+          .join(' ')
+          .trim();
+      }
+    }
+  } catch (error) {
+    console.error('Error parsing testimonial quote:', error);
+  }
+
+  // Extract image URL using the same pattern as AircraftFleet
+  const imageUrl = cmsTestimonial.image?.url 
+    ? cmsService.getImageUrl(cmsTestimonial.image.url)
+    : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400';
+  
+  // Log the image URL for debugging
+  console.log('Testimonial image path:', cmsTestimonial.image?.url);
+  console.log('Processed image URL:', imageUrl);
+
   return {
-    quote: attributes.quote,
-    name: attributes.authorName,
-    title: attributes.authorTitle,
-    image: attributes.authorImage?.data 
-      ? cmsService.getImageUrl(attributes.authorImage.data.attributes.url)
-      : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
+    quote: quoteText || 'No quote available',
+    name: cmsTestimonial.name || 'Anonymous',
+    title: cmsTestimonial.title || '',
+    image: imageUrl,
   };
 };
 
 const Testimonials = () => {
-  const { data: testimonials, isLoading, error, refetch } = useTestimonials();
+  const { data: testimonialResponse, isLoading, error, refetch } = useTestimonials();
 
   if (isLoading) {
     return (
@@ -64,7 +118,7 @@ const Testimonials = () => {
     );
   }
 
-  if (!testimonials || testimonials.length === 0) {
+  if (!testimonialResponse || !testimonialResponse.data || testimonialResponse.data.length === 0) {
     return (
       <section id="testimonials" className="py-20 bg-gradient-to-br from-sky-50 to-white">
         <div className="container mx-auto px-4">
@@ -83,7 +137,7 @@ const Testimonials = () => {
     );
   }
 
-  const transformedTestimonials = testimonials.map(transformCMSTestimonial);
+  const transformedTestimonials = testimonialResponse.data.map(transformCMSTestimonial);
 
   return (
     <section id="testimonials" className="py-20 bg-gradient-to-br from-sky-50 to-white">

@@ -6,7 +6,6 @@ import { useAircraftByCategory } from "@/hooks/useCMS";
 import { cmsService } from "@/services/cms";
 import { ErrorState, NetworkError } from "@/components/ui/error-state";
 import { AircraftCardSkeleton, LoadingGrid } from "@/components/ui/loading-skeletons";
-import { CMSAircraft } from "@/types/cms";
 
 type AircraftProps = {
   id: number;
@@ -22,7 +21,6 @@ type AircraftProps = {
 };
 
 const AircraftCard = ({ aircraft }: { aircraft: AircraftProps }) => {
-  console.log("Rendering AircraftCard for:", aircraft.name);
   return (
     <Card className="overflow-hidden h-full">
       <div className="aspect-video overflow-hidden">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAircraft, useCreateAircraft, useUpdateAircraft, useDeleteAircraft } from "@/hooks/useCMS";
+import { cmsService } from "@/services/cms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { Plus, Edit, Trash2, Save, X, Upload } from "lucide-react";
 import { CMSAircraft } from "@/types/cms";
 import { ErrorState, NetworkError } from "@/components/ui/error-state";
 import { AircraftCardSkeleton, LoadingGrid } from "@/components/ui/loading-skeletons";
@@ -31,6 +32,8 @@ const AircraftManager = () => {
     category: '',
     isActive: true,
   });
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const resetForm = () => {
     setFormData({
@@ -44,20 +47,45 @@ const AircraftManager = () => {
       category: '',
       isActive: true,
     });
+    setSelectedImage(null);
+    setImagePreview(null);
     setEditingId(null);
     setShowAddForm(false);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const aircraftData = {
-      ...formData,
-      features: formData.features.split(',').map(f => f.trim()).filter(f => f.length > 0),
-      category: [formData.category], // Ensure category is an array
-    };
-
     try {
+      let imageId = null;
+      
+      // Upload image if selected
+      if (selectedImage) {
+        const uploadedImage = await cmsService.uploadFile(selectedImage);
+        imageId = uploadedImage.id;
+      }
+      
+      const aircraftData = {
+        ...formData,
+        features: formData.features.split(',').map(f => f.trim()).filter(f => f.length > 0),
+        category: [formData.category], // Ensure category is an array
+        ...(imageId && { image: imageId }), // Add image ID if uploaded
+      };
+
       if (editingId) {
         await updateMutation.mutateAsync({ id: editingId, data: aircraftData });
       } else {
@@ -70,17 +98,30 @@ const AircraftManager = () => {
   };
 
   const handleEdit = (aircraftItem: CMSAircraft) => {
+    // Handle both possible data structures
+    const attributes = (aircraftItem as any).attributes || aircraftItem;
+    
     setFormData({
-      name: aircraftItem.attributes.name,
-      model: aircraftItem.attributes.model,
-      seats: aircraftItem.attributes.seats,
-      enginetype: aircraftItem.attributes.enginetype,
-      speed: aircraftItem.attributes.speed,
-      range: aircraftItem.attributes.range,
-      features: aircraftItem.attributes.features.join(', '),
-      category: Array.isArray(aircraftItem.attributes.category) ? aircraftItem.attributes.category[0] : aircraftItem.attributes.category,
-      isActive: aircraftItem.attributes.isActive,
+      name: attributes.name,
+      model: attributes.model,
+      seats: attributes.seats,
+      enginetype: attributes.enginetype,
+      speed: attributes.speed,
+      range: attributes.range,
+      features: attributes.features ? attributes.features.join(', ') : '',
+      category: Array.isArray(attributes.category) ? attributes.category[0] : attributes.category,
+      isActive: attributes.isActive,
     });
+    
+    // Set existing image preview if available
+    if (attributes.image?.data) {
+      const imageUrl = cmsService.getImageUrl(attributes.image.data.attributes?.url || attributes.image.data.url);
+      setImagePreview(imageUrl);
+    } else {
+      setImagePreview(null);
+    }
+    setSelectedImage(null);
+    
     setEditingId(aircraftItem.id);
     setShowAddForm(true);
   };
@@ -234,6 +275,26 @@ const AircraftManager = () => {
                 />
               </div>
               
+              <div>
+                <Label htmlFor="image">Aircraft Image</Label>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="cursor-pointer"
+                />
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img 
+                      src={imagePreview} 
+                      alt="Preview" 
+                      className="w-32 h-32 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
+              
               
               
               <div className="flex justify-end space-x-2">
@@ -252,60 +313,95 @@ const AircraftManager = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {aircraft?.map((aircraftItem) => (
-          <Card key={aircraftItem.id} className="relative">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg">{aircraftItem.attributes.name}</CardTitle>
-                <Badge variant={aircraftItem.attributes.isActive ? "default" : "secondary"}>
-                  {aircraftItem.attributes.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </div>
-              
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <p><strong>Model:</strong> {aircraftItem.attributes.model}</p>
-                <p><strong>Seats:</strong> {aircraftItem.attributes.seats}</p>
-                <p><strong>Engine:</strong> {aircraftItem.attributes.enginetype}</p>
-                <p><strong>Speed:</strong> {aircraftItem.attributes.speed}</p>
-                <p><strong>Range:</strong> {aircraftItem.attributes.range}</p>
-                <p><strong>Category:</strong> {aircraftItem.attributes.category}</p>
-                
-                {aircraftItem.attributes.features.length > 0 && (
-                  <div>
-                    <strong>Features:</strong>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {aircraftItem.attributes.features.map((feature, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {feature}
-                        </Badge>
-                      ))}
+        {aircraft && aircraft.length > 0 ? (
+          aircraft.map((aircraftItem) => {
+            // Debug logging to see the data structure
+            console.log('Aircraft item:', aircraftItem);
+            
+            // Handle both possible data structures with proper typing
+            const attributes = (aircraftItem as any).attributes || aircraftItem;
+            
+            // Safety check for attributes
+            if (!attributes) {
+              console.warn('Aircraft item has no attributes:', aircraftItem);
+              return null;
+            }
+            
+            return (
+              <Card key={aircraftItem.id} className="relative">
+                {/* Image display */}
+                <div className="w-full h-48 overflow-hidden rounded-t-lg bg-gray-100">
+                  {attributes.image?.data ? (
+                    <img 
+                      src={cmsService.getImageUrl(attributes.image.data.attributes?.url || attributes.image.data.url)}
+                      alt={attributes.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <Upload className="h-12 w-12" />
                     </div>
+                  )}
+                </div>
+                
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">{attributes.name || 'Unknown Aircraft'}</CardTitle>
+                    <Badge variant={attributes.isActive ? "default" : "secondary"}>
+                      {attributes.isActive ? "Active" : "Inactive"}
+                    </Badge>
                   </div>
-                )}
-              </div>
-              
-              <div className="flex justify-end space-x-2 mt-4">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleEdit(aircraftItem)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleDelete(aircraftItem.id)}
-                  disabled={deleteMutation.isPending}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-sm">
+                    <p><strong>Model:</strong> {attributes.model || 'N/A'}</p>
+                    <p><strong>Seats:</strong> {attributes.seats || 'N/A'}</p>
+                    <p><strong>Engine:</strong> {attributes.enginetype || 'N/A'}</p>
+                    <p><strong>Speed:</strong> {attributes.speed || 'N/A'}</p>
+                    <p><strong>Range:</strong> {attributes.range || 'N/A'}</p>
+                    <p><strong>Category:</strong> {attributes.category || 'N/A'}</p>
+                    
+                    {attributes.features && attributes.features.length > 0 && (
+                      <div>
+                        <strong>Features:</strong>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {attributes.features.map((feature: string, index: number) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-end space-x-2 mt-4">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(aircraftItem)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(aircraftItem.id)}
+                      disabled={deleteMutation.isPending}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        ) : (
+          <div className="col-span-full text-center py-8 text-gray-500">
+            <p>No aircraft found. Click "Add Aircraft" to create your first aircraft.</p>
+          </div>
+        )}
       </div>
     </div>
   );
