@@ -18,8 +18,8 @@ class CMSService {
   private uploadsURL: string;
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337/api';
-    this.uploadsURL = import.meta.env.VITE_STRAPI_UPLOADS_URL || 'http://localhost:1337';
+    this.baseURL = import.meta.env.VITE_STRAPI_API_URL || 'https://incredible-desk-736f4f6f27.strapiapp.com/api';
+    this.uploadsURL = import.meta.env.VITE_STRAPI_UPLOADS_URL || 'https://incredible-desk-736f4f6f27.strapiapp.com/';
     
     this.api = axios.create({
       baseURL: this.baseURL,
