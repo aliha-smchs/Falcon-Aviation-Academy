@@ -12,22 +12,16 @@ const VideoSection = () => {
         </div>
         
         <div className="mx-auto mt-4 max-w-xl">
-          <div className="relative aspect-video overflow-hidden rounded-lg">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-sm hover:bg-blue-700 transition-colors cursor-pointer">
-                  <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <p className="text-xs text-gray-600">Flight Training Overview</p>
-              </div>
-            </div>
-            <img
-              src="/placeholder.svg"
-              alt="Flight training video thumbnail"
-              className="h-full w-full object-cover opacity-50"
-            />
+          <div className="relative aspect-video overflow-hidden rounded-lg shadow-lg">
+            <iframe
+              src="https://www.youtube.com/embed/cOMG2mj16WQ?list=PL4262FD18248BD150"
+              title="Learn to fly with Sporty's Pilot Training Courses - Private, Instrument, Commercial ground school"
+              className="h-full w-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
           </div>
           
           {/* Minimal Stats */}
