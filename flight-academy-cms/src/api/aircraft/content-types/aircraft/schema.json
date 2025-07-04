@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "aircrafts",
+  "info": {
+    "singularName": "aircraft",
+    "pluralName": "aircrafts",
+    "displayName": "Aircraft"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "model": {
+      "type": "string"
+    },
+    "enginetype": {
+      "type": "string"
+    },
+    "speed": {
+      "type": "string"
+    },
+    "range": {
+      "type": "string"
+    },
+    "seats": {
+      "type": "integer"
+    },
+    "isActive": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "features": {
+      "type": "json"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Training Aircraft",
+        "Multi-Engine Aircarft",
+        "Simulators"
+      ]
+    }
+  }
+}
