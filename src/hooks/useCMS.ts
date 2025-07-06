@@ -157,7 +157,7 @@ export const useCreateAircraft = () => {
 export const useUpdateAircraft = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<CMSAircraft, CMSError, { id: number; data: Partial<CMSAircraftAttributes> }>({
+  return useMutation<CMSAircraft, CMSError, { id: string | number; data: Partial<CMSAircraftAttributes> }>({
     mutationFn: ({ id, data }) => cmsService.updateAircraft(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.aircraft });
@@ -169,7 +169,7 @@ export const useUpdateAircraft = () => {
 export const useDeleteAircraft = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<void, CMSError, number>({
+  return useMutation<void, CMSError, string | number>({
     mutationFn: (id) => cmsService.deleteAircraft(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.aircraft });
@@ -192,7 +192,7 @@ export const useCreateInstructor = () => {
 export const useUpdateInstructor = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<CMSInstructor, CMSError, { id: number; data: Partial<any> }>({
+  return useMutation<CMSInstructor, CMSError, { id: string | number; data: Partial<any> }>({
     mutationFn: ({ id, data }) => cmsService.updateInstructor(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.instructors });
@@ -204,7 +204,7 @@ export const useUpdateInstructor = () => {
 export const useDeleteInstructor = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<void, CMSError, number>({
+  return useMutation<void, CMSError, string | number>({
     mutationFn: (id) => cmsService.deleteInstructor(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.instructors });
@@ -227,7 +227,7 @@ export const useCreateCourse = () => {
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<CMSCourse, CMSError, { id: number; data: Partial<any> }>({
+  return useMutation<CMSCourse, CMSError, { id: string | number; data: Partial<any> }>({
     mutationFn: ({ id, data }) => cmsService.updateCourse(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses });
@@ -238,7 +238,7 @@ export const useUpdateCourse = () => {
 export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<void, CMSError, number>({
+  return useMutation<void, CMSError, string | number>({
     mutationFn: (id) => cmsService.deleteCourse(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.courses });
@@ -261,7 +261,7 @@ export const useCreateTestimonial = () => {
 export const useUpdateTestimonial = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<CMSTestimonial, CMSError, { id: number; data: Partial<any> }>({
+  return useMutation<CMSTestimonial, CMSError, { id: string | number; data: Partial<any> }>({
     mutationFn: ({ id, data }) => cmsService.updateTestimonial(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.testimonials });
@@ -272,7 +272,7 @@ export const useUpdateTestimonial = () => {
 export const useDeleteTestimonial = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<void, CMSError, number>({
+  return useMutation<void, CMSError, string | number>({
     mutationFn: (id) => cmsService.deleteTestimonial(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.testimonials });

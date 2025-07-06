@@ -280,7 +280,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async updateAircraft(id: number, data: Partial<CMSAircraftAttributes>): Promise<CMSAircraft> {
+  async updateAircraft(id: string | number, data: Partial<CMSAircraftAttributes>): Promise<CMSAircraft> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSAircraft>> = 
         await this.api.put(`/aircrafts/${id}`, { data });
@@ -290,7 +290,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async deleteAircraft(id: number): Promise<void> {
+  async deleteAircraft(id: string | number): Promise<void> {
     try {
       await this.api.delete(`/aircrafts/${id}`);
     } catch (error) {
@@ -309,7 +309,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async updateInstructor(id: number, data: Partial<any>): Promise<CMSInstructor> {
+  async updateInstructor(id: string | number, data: Partial<any>): Promise<CMSInstructor> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSInstructor>> = 
         await this.api.put(`/instructors/${id}`, { data });
@@ -319,7 +319,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async deleteInstructor(id: number): Promise<void> {
+  async deleteInstructor(id: string | number): Promise<void> {
     try {
       await this.api.delete(`/instructors/${id}`);
     } catch (error) {
@@ -338,7 +338,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async updateCourse(id: number, data: Partial<any>): Promise<CMSCourse> {
+  async updateCourse(id: string | number, data: Partial<any>): Promise<CMSCourse> {
     try {
       const response: AxiosResponse<StrapiResponse<CMSCourse>> = 
         await this.api.put(`/courses/${id}`, { data });
@@ -348,7 +348,7 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async deleteCourse(id: number): Promise<void> {
+  async deleteCourse(id: string | number): Promise<void> {
     try {
       await this.api.delete(`/courses/${id}`);
     } catch (error) {
@@ -367,17 +367,21 @@ async getCoursesByCategory(category: string, populate = true): Promise<CMSCourse
     }
   }
 
-  async updateTestimonial(id: number, data: Partial<any>): Promise<CMSTestimonial> {
+  async updateTestimonial(id: string | number, data: Partial<any>): Promise<CMSTestimonial> {
     try {
+      // Filter out invalid keys like 'isActive'
+      const validData = { ...data };
+      delete validData.isActive;
+
       const response: AxiosResponse<StrapiResponse<CMSTestimonial>> = 
-        await this.api.put(`/testimonials/${id}`, { data });
+        await this.api.put(`/testimonials/${id}`, { data: validData });
       return response.data.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
 
-  async deleteTestimonial(id: number): Promise<void> {
+  async deleteTestimonial(id: string | number): Promise<void> {
     try {
       await this.api.delete(`/testimonials/${id}`);
     } catch (error) {

@@ -35,7 +35,7 @@ const InstructorManager = () => {
     return String(content);
   };
   
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -85,19 +85,52 @@ const InstructorManager = () => {
     e.preventDefault();
     
     try {
-      let imageId = null;
-      
-      // Upload image if selected
-      if (selectedImage) {
-        const uploadedImage = await cmsService.uploadFile(selectedImage);
-        imageId = uploadedImage.id;
+      const instructorData: any = {
+        name: formData.name,
+        title: formData.title,
+        experience: formData.experience,
+        qualifications: formData.qualifications.split(',').map(q => q.trim()).filter(q => q.length > 0),
+        isActive: formData.isActive,
+      };
+
+      // Handle email - only include if it's a valid email
+      if (formData.email && formData.email.trim() !== '') {
+        instructorData.email = formData.email.trim();
+      }
+
+      // Handle phone - only include if not empty
+      if (formData.phone && formData.phone.trim() !== '') {
+        instructorData.phone = formData.phone.trim();
+      }
+
+      // Handle bio as rich text blocks
+      if (formData.bio && formData.bio.trim() !== '') {
+        instructorData.bio = [
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: formData.bio.trim()
+              }
+            ]
+          }
+        ];
       }
       
-      const instructorData = {
-        ...formData,
-        qualifications: formData.qualifications.split(',').map(q => q.trim()).filter(q => q.length > 0),
-        ...(imageId && { image: imageId }),
-      };
+      // Only upload and set image if a new image was selected
+      if (selectedImage) {
+        try {
+          const uploadedImage = await cmsService.uploadFile(selectedImage);
+          instructorData.image = uploadedImage.id;
+        } catch (uploadError) {
+          console.error('Error uploading image:', uploadError);
+          // Continue without image if upload fails
+        }
+      }
+
+      console.log('Submitting instructor data:', instructorData);
+      console.log('Using ID:', editingId);
 
       if (editingId) {
         await updateMutation.mutateAsync({ id: editingId, data: instructorData });
@@ -107,6 +140,7 @@ const InstructorManager = () => {
       resetForm();
     } catch (error) {
       console.error('Error saving instructor:', error);
+      console.error('Error details:', error);
     }
   };
 
@@ -133,11 +167,11 @@ const InstructorManager = () => {
     }
     setSelectedImage(null);
     
-    setEditingId(instructor.id);
+    setEditingId((instructor as any).documentId || instructor.id.toString());
     setShowAddForm(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (window.confirm('Are you sure you want to delete this instructor?')) {
       try {
         await deleteMutation.mutateAsync(id);
@@ -315,7 +349,8 @@ const InstructorManager = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {!(showAddForm || editingId) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {instructors && instructors.length > 0 ? (
           instructors.map((instructor) => {
             const attributes = (instructor as any).attributes || instructor;
@@ -390,7 +425,7 @@ const InstructorManager = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(instructor.id)}
+                      onClick={() => handleDelete((instructor as any).documentId || instructor.id)}
                       disabled={deleteMutation.isPending}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -405,7 +440,8 @@ const InstructorManager = () => {
             <p>No instructors found. Click "Add Instructor" to create your first instructor profile.</p>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

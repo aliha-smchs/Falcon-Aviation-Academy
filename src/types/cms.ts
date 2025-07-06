@@ -66,9 +66,9 @@ export interface CMSAircraftAttributes {
   enginetype: string; // Note: this matches the Strapi schema field name
   speed: string;
   range: string;
-  features: string[];
+  features: string[]; // JSON field in Strapi, array of strings
   isActive: boolean;
-  category: string[];
+  category: string; // Enumeration field, single value
   image: {
     data: StrapiEntity<StrapiMedia>;
   };
@@ -81,8 +81,8 @@ export interface CMSInstructorAttributes {
   name: string;
   title: string;
   experience: string;
-  qualifications: string[];
-  bio: string;
+  qualifications: string[]; // JSON field in Strapi
+  bio: any; // Rich text blocks field in Strapi
   email?: string;
   phone?: string;
   isActive: boolean;

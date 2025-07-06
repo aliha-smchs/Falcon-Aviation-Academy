@@ -35,7 +35,7 @@ const CourseManager = () => {
     return String(content);
   };
   
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -139,11 +139,11 @@ const CourseManager = () => {
       curriculum: Array.isArray(course.curriculum) ? course.curriculum.join(', ') : course.curriculum || '',
     });
     
-    setEditingId(course.id);
+    setEditingId((course as any).documentId || course.id.toString());
     setShowAddForm(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (window.confirm('Are you sure you want to delete this course?')) {
       try {
         await deleteMutation.mutateAsync(id);
@@ -399,7 +399,8 @@ const CourseManager = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {!(showAddForm || editingId) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses && courses.length > 0 ? (
           courses.map((course: any) => {
             // API returns flat structure now
@@ -471,7 +472,7 @@ const CourseManager = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(course.id)}
+                      onClick={() => handleDelete((course as any).documentId || course.id)}
                       disabled={deleteMutation.isPending}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -486,7 +487,8 @@ const CourseManager = () => {
             <p>No courses found. Click "Add Course" to create your first course.</p>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

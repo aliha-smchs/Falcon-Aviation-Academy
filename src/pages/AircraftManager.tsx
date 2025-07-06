@@ -19,7 +19,7 @@ const AircraftManager = () => {
   const updateMutation = useUpdateAircraft();
   const deleteMutation = useDeleteAircraft();
   
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -71,20 +71,23 @@ const AircraftManager = () => {
     e.preventDefault();
     
     try {
-      let imageId = null;
+      const aircraftData: any = {
+        name: formData.name,
+        model: formData.model,
+        seats: formData.seats,
+        enginetype: formData.enginetype,
+        speed: formData.speed,
+        range: formData.range,
+        features: formData.features.split(',').map(f => f.trim()).filter(f => f.length > 0), // Keep as array for JSON field
+        category: formData.category, // Single value, not array (it's an enumeration in Strapi)
+        isActive: formData.isActive,
+      };
       
-      // Upload image if selected
+      // Only upload and set image if a new image was selected
       if (selectedImage) {
         const uploadedImage = await cmsService.uploadFile(selectedImage);
-        imageId = uploadedImage.id;
+        aircraftData.image = uploadedImage.id;
       }
-      
-      const aircraftData = {
-        ...formData,
-        features: formData.features.split(',').map(f => f.trim()).filter(f => f.length > 0),
-        category: [formData.category], // Ensure category is an array
-        ...(imageId && { image: imageId }), // Add image ID if uploaded
-      };
 
       if (editingId) {
         await updateMutation.mutateAsync({ id: editingId, data: aircraftData });
@@ -109,7 +112,7 @@ const AircraftManager = () => {
       speed: attributes.speed,
       range: attributes.range,
       features: attributes.features ? attributes.features.join(', ') : '',
-      category: Array.isArray(attributes.category) ? attributes.category[0] : attributes.category,
+      category: attributes.category || '', // Single value, not array
       isActive: attributes.isActive,
     });
     
@@ -122,11 +125,11 @@ const AircraftManager = () => {
     }
     setSelectedImage(null);
     
-    setEditingId(aircraftItem.id);
+    setEditingId((aircraftItem as any).documentId || aircraftItem.id.toString());
     setShowAddForm(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (window.confirm('Are you sure you want to delete this aircraft?')) {
       try {
         await deleteMutation.mutateAsync(id);
@@ -312,12 +315,10 @@ const AircraftManager = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {!(showAddForm || editingId) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {aircraft && aircraft.length > 0 ? (
           aircraft.map((aircraftItem) => {
-            // Debug logging to see the data structure
-            console.log('Aircraft item:', aircraftItem);
-            
             // Handle both possible data structures with proper typing
             const attributes = (aircraftItem as any).attributes || aircraftItem;
             
@@ -387,7 +388,7 @@ const AircraftManager = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(aircraftItem.id)}
+                      onClick={() => handleDelete((aircraftItem as any).documentId || aircraftItem.id)}
                       disabled={deleteMutation.isPending}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -402,7 +403,8 @@ const AircraftManager = () => {
             <p>No aircraft found. Click "Add Aircraft" to create your first aircraft.</p>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

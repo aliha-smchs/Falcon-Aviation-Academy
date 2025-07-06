@@ -20,6 +20,13 @@ const TestimonialManager = () => {
   // Extract testimonials from the response
   const testimonials = testimonialsResponse?.data || [];
   
+  // Debug: Log the testimonials data structure
+  console.log('Testimonials response:', testimonialsResponse);
+  console.log('Testimonials array:', testimonials);
+  if (testimonials.length > 0) {
+    console.log('First testimonial structure:', testimonials[0]);
+  }
+  
   // Helper function to safely render rich text content
   const renderRichText = (content: any): string => {
     if (!content) return '';
@@ -38,7 +45,7 @@ const TestimonialManager = () => {
     return String(content);
   };
   
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     quote: '',
@@ -89,13 +96,30 @@ const TestimonialManager = () => {
       }
       
       const testimonialData = {
-        ...formData,
+        quote: [
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: formData.quote
+              }
+            ]
+          }
+        ],
+        name: formData.name,
+        title: formData.title,
+        isActive: formData.isActive,
         ...(imageId && { image: imageId }),
       };
 
       if (editingId) {
+        console.log('=== SUBMIT DEBUG ===');
+        console.log('About to update testimonial with ID:', editingId);
+        console.log('Update data being sent:', testimonialData);
         await updateMutation.mutateAsync({ id: editingId, data: testimonialData });
       } else {
+        console.log('Creating new testimonial with data:', testimonialData);
         await createMutation.mutateAsync(testimonialData);
       }
       resetForm();
@@ -105,6 +129,11 @@ const TestimonialManager = () => {
   };
 
   const handleEdit = (testimonial: any) => {
+    console.log('=== EDIT DEBUG ===');
+    console.log('Full testimonial object:', testimonial);
+    console.log('Testimonial ID:', testimonial.id);
+    console.log('Testimonial documentId:', testimonial.documentId);
+    
     setFormData({
       quote: renderRichText(testimonial.quote),
       name: testimonial.name,
@@ -121,11 +150,12 @@ const TestimonialManager = () => {
     }
     setSelectedImage(null);
     
-    setEditingId(testimonial.id);
+    console.log('Setting editingId to:', testimonial.documentId);
+    setEditingId(testimonial.documentId);
     setShowAddForm(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (window.confirm('Are you sure you want to delete this testimonial?')) {
       try {
         await deleteMutation.mutateAsync(id);
@@ -267,73 +297,80 @@ const TestimonialManager = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {testimonials && testimonials.length > 0 ? (
-          testimonials.map((testimonial: any) => {
-            return (
-              <Card key={testimonial.id} className="relative">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 overflow-hidden rounded-full bg-gray-100">
-                        {testimonial.image?.url ? (
-                          <img 
-                            src={cmsService.getImageUrl(testimonial.image.url)}
-                            alt={testimonial.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <User className="h-6 w-6" />
-                          </div>
-                        )}
+      {!(showAddForm || editingId) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials && testimonials.length > 0 ? (
+            testimonials.map((testimonial: any, index: number) => {
+              console.log(`Rendering testimonial ${index}:`, {
+                id: testimonial.id,
+                testimonial: testimonial
+              });
+              
+              return (
+                <Card key={testimonial.id} className="relative">
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 overflow-hidden rounded-full bg-gray-100">
+                          {testimonial.image?.url ? (
+                            <img 
+                              src={cmsService.getImageUrl(testimonial.image.url)}
+                              alt={testimonial.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <User className="h-6 w-6" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm">{testimonial.name || 'Unknown Author'}</h3>
+                          <p className="text-xs text-gray-600">{testimonial.title || 'N/A'}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-sm">{testimonial.name || 'Unknown Author'}</h3>
-                        <p className="text-xs text-gray-600">{testimonial.title || 'N/A'}</p>
-                      </div>
+                      <Badge variant={testimonial.publishedAt ? "default" : "secondary"}>
+                        {testimonial.publishedAt ? "Published" : "Draft"}
+                      </Badge>
                     </div>
-                    <Badge variant={testimonial.publishedAt ? "default" : "secondary"}>
-                      {testimonial.publishedAt ? "Published" : "Draft"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  {/* Quote */}
-                  <div className="mb-4">
-                    <blockquote className="text-sm text-gray-700 italic border-l-4 border-sky-200 pl-3">
-                      "{renderRichText(testimonial.quote) || 'No testimonial text'}"
-                    </blockquote>
-                  </div>
+                  </CardHeader>
                   
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(testimonial)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDelete(testimonial.id)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
-        ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
-            <p>No testimonials found. Click "Add Testimonial" to create your first testimonial.</p>
-          </div>
-        )}
-      </div>
+                  <CardContent>
+                    {/* Quote */}
+                    <div className="mb-4">
+                      <blockquote className="text-sm text-gray-700 italic border-l-4 border-sky-200 pl-3">
+                        "{renderRichText(testimonial.quote) || 'No testimonial text'}"
+                      </blockquote>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(testimonial)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDelete(testimonial.documentId)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <div className="col-span-full text-center py-8 text-gray-500">
+              <p>No testimonials found. Click "Add Testimonial" to create your first testimonial.</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
